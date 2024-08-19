@@ -1,0 +1,11 @@
+frontend - next js 
+
+users upload a folder with all images. 
+
+user folder that contains all images
+
+ML model is given some parameters to look for (different type of folder)
+ - if found in image, then adds it to corresponding folder
+
+the result is that folders will be outputed with the correct corresponding parameter that is contained in specific images. Users 
+can download the folders. 
