@@ -1,0 +1,8 @@
+face
+plant
+animal
+vehicle
+building
+food
+furniture
+electronics

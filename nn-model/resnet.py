@@ -23,7 +23,7 @@ resnet.eval()
 
 out = resnet(batch_t)
 
-with open('image_net_classes.txt') as f:
+with open('basic_labels.txt') as f:
     classes = [line.strip() for line in f.readlines()]
 
 
