@@ -53,25 +53,13 @@ def find_closest_hypernym(word, hypernyms): # finds the closest hypernym to the 
 
     return closest_hypernym
 
-# # Example usage:
-# input_word = "automobile"
-# closest_hypernym, similarity_score = find_closest_hypernym(input_word, hypernyms_dict)
-
-# if closest_hypernym:
-#     print(f"The closest hypernym to '{input_word}' is '{closest_hypernym.lemma_names()[0]}' with a similarity score of {similarity_score}.")
-# else:
-#     print("No close hypernym found.")
-
-
-
-categorized_words = { "vehicle": [], "furniture": [], "clothing": [], "miscellaneous": [], "electronic": [], "place": [] }
+# for word in words:
+#     category = get_category(word)
+#     categorized_words[category].append(word)
 
 for word in words:
-    category = get_category(word)
-    categorized_words[category].append(word)
+    closest_hypernym = find_closest_hypernym(word, all_hyper)
 
-
-closest_hypernym = find_closest_hypernym("purse", all_hyper)
 print(closest_hypernym)
 
 # # Output the categorized words

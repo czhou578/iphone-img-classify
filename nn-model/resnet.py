@@ -26,7 +26,6 @@ out = resnet(batch_t)
 with open('basic_labels.txt') as f:
     classes = [line.strip() for line in f.readlines()]
 
-
 _, indices = torch.sort(out, descending=True)
 percentage = torch.nn.functional.softmax(out, dim=1)[0] * 100
 

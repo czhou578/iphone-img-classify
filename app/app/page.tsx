@@ -1,5 +1,10 @@
 
+//find all images with ____
+
 export default function Home() {
+
+  
+  
   return (
     <div>
       <div className="flex items-center justify-center min-h-screen">
