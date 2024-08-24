@@ -9,3 +9,12 @@ ML model is given some parameters to look for (different type of folder)
 
 the result is that folders will be outputed with the correct corresponding parameter that is contained in specific images. Users 
 can download the folders. 
+
+face
+plant
+animal
+vehicle
+building
+food
+furniture
+electronics

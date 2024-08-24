@@ -25,6 +25,7 @@ with open("imagenet_class_index.json") as f:
 
 # Invert the dictionary to map indices to class names
 idx_to_class = {int(key): value[1] for key, value in class_idx.items()}
+print(idx_to_class)
 
 register_heif_opener()
 
@@ -61,5 +62,7 @@ with torch.no_grad():  # Disable gradient computation
     for batch in dataloader:
         outputs = model(batch)  # Perform inference
         _, preds = torch.max(outputs, 1)  # Get the predicted class
-        print(preds)
+        for pred in preds:
+            label = idx_to_class[pred.item()]
+            print(label)
 
