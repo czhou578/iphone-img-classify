@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from "react";
+import nlp from 'compromise'
 
 export default function Home() {
 
@@ -9,9 +10,27 @@ export default function Home() {
 
   const getPythonRoute = "http://192.168.81.153:8080/get-images?"
 
+  const extractKeywords = () => {
+    const doc = nlp(parameter);
+    
+    // Use compromise to find the most relevant noun
+    let keyword = '';
+
+    // Match and extract noun or noun phrases
+    const nouns = doc.nouns().out('array');
+
+    if (nouns.length > 0) {
+      // For simplicity, let's just take the first noun as the keyword
+      keyword = nouns[nouns.length - 1];
+    }
+
+    return keyword
+  }
+
   const handleSubmit = () => {
+    let keyword = extractKeywords()
     fetch(getPythonRoute + new URLSearchParams({
-      keyword: parameter.toString()
+      keyword: keyword.toString()
     }),
     {
       method: 'GET'
