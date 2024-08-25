@@ -1,5 +1,4 @@
 import nltk
-from nltk.tokenize import word_tokenize
 from nltk.corpus import wordnet as wn
 import json
 from flask import Flask, jsonify, request, send_file
@@ -19,10 +18,12 @@ CORS(app)
 conn = sqlite3.connect('pictures.db', check_same_thread=False)
 cursor = conn.cursor()
 
+nltk.download('wordnet')
 windows_image_path = "C:\\Users\\mycol\\Documents\\iphone-photos"
 wsl_path = subprocess.check_output(['wslpath', windows_image_path]).decode().strip()
 image_extensions = ["*.HEIC", "*.heic"]
 img_paths = []
+
 for ext in image_extensions:
     img_paths.extend(glob.glob(os.path.join(wsl_path, ext)))
 
@@ -31,6 +32,25 @@ with open("../nn-model/imagenet_class_index.json") as f:
     class_idx = json.load(f)
 
 vocab_list = class_idx.keys() # get all the keys
+
+def keyword_to_nearest_key(keyword):
+    target_synsets = wn.synsets(keyword)
+    word_list_synsets = [wn.synsets(word) for word in vocab_list]
+
+    max_similarity = 0
+    closest_word = None
+    for word_synset in word_list_synsets:
+        for target_synset in target_synsets:
+            # print(word_synset)
+            # print(target_synset)
+            if len(word_synset) > 0:
+                similarity = target_synset.wup_similarity(word_synset[0])
+                if similarity > max_similarity:
+                    max_similarity = similarity
+                    closest_word = word_synset[0].lemmas()[0].name()
+    
+    print('closest word is ', closest_word, ' and the max similar is, ', max_similarity)
+    return closest_word, max_similarity
 
 def encode_image(image_path):
     # Read and convert the .heic file to a PIL image
@@ -60,6 +80,9 @@ def queryImages(keyword):
 @app.route('/get-images', methods=['GET'])
 def queryImagesKeyword():
     keyword = request.args.get('keyword')
+    if keyword not in vocab_list:
+        keyword = keyword_to_nearest_key(keyword)
+
     rows = queryImages(keyword)
     matching_imgs = []
 
