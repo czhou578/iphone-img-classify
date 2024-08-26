@@ -65,7 +65,7 @@ export default function Home() {
               alt="result image"
               style={{ width: "500px", height: "500px", objectFit: "cover" }} 
               />
-        )): null}
+        )): <h2>No Results</h2>}
       </div>
     </div>
   );

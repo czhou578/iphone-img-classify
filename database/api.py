@@ -11,6 +11,7 @@ import base64
 import io
 import pyheif
 from PIL import Image
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -19,7 +20,7 @@ conn = sqlite3.connect('pictures.db', check_same_thread=False)
 cursor = conn.cursor()
 
 nltk.download('wordnet')
-windows_image_path = "C:\\Users\\mycol\\Documents\\iphone-photos"
+windows_image_path = os.environ.get('FILE_PATH')
 wsl_path = subprocess.check_output(['wslpath', windows_image_path]).decode().strip()
 image_extensions = ["*.HEIC", "*.heic"]
 img_paths = []
@@ -37,7 +38,6 @@ for entry in class_idx.values():
     vocab_list.append(entry[1])
 
 def semantic_similarity(word1, word2):
-    # print('word1 is, ', word1, ' and word2 is, ', word2)
     synsets1 = wn.synsets(word1)
     synsets2 = wn.synsets(word2)
     

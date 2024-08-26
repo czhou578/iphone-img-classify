@@ -9,9 +9,10 @@ import os
 import glob
 import json
 import sqlite3
+import os
 
 
-windows_image_paths = "C:\\Users\\mycol\\Documents\\iphone-photos"
+windows_image_paths = os.environ.get('FILE_PATH')
 download_url("https://s3.amazonaws.com/deep-learning-models/image-models/imagenet_class_index.json", ".", "imagenet_class_index.json")
 
 wsl_path = subprocess.check_output(['wslpath', windows_image_paths]).decode().strip()
