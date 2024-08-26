@@ -1,7 +1,7 @@
 import nltk
 from nltk.corpus import wordnet as wn
 import json
-from flask import Flask, jsonify, request, send_file
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import sqlite3
 import os
@@ -31,26 +31,32 @@ for ext in image_extensions:
 with open("../nn-model/imagenet_class_index.json") as f:
     class_idx = json.load(f)
 
-vocab_list = class_idx.keys() # get all the keys
+vocab_list = [] # get all the keys
 
-def keyword_to_nearest_key(keyword):
-    target_synsets = wn.synsets(keyword)
-    word_list_synsets = [wn.synsets(word) for word in vocab_list]
+for entry in class_idx.values():
+    vocab_list.append(entry[1])
 
-    max_similarity = 0
-    closest_word = None
-    for word_synset in word_list_synsets:
-        for target_synset in target_synsets:
-            # print(word_synset)
-            # print(target_synset)
-            if len(word_synset) > 0:
-                similarity = target_synset.wup_similarity(word_synset[0])
-                if similarity > max_similarity:
-                    max_similarity = similarity
-                    closest_word = word_synset[0].lemmas()[0].name()
+def semantic_similarity(word1, word2):
+    # print('word1 is, ', word1, ' and word2 is, ', word2)
+    synsets1 = wn.synsets(word1)
+    synsets2 = wn.synsets(word2)
     
-    print('closest word is ', closest_word, ' and the max similar is, ', max_similarity)
-    return closest_word, max_similarity
+    max_similarity = 0
+    
+    for synset1 in synsets1:
+        for synset2 in synsets2:
+            similarity = synset1.path_similarity(synset2)
+            if similarity and similarity > max_similarity:
+                max_similarity = similarity
+    
+    return max_similarity
+
+def keyword_to_nearest_key(target_word, word_list, top_n=1):
+    similarities = [(word, semantic_similarity(target_word, word)) for word in word_list]
+    similarities.sort(key=lambda x: x[1], reverse=True)
+    print(similarities[:top_n])
+
+    return similarities[:top_n][0]
 
 def encode_image(image_path):
     # Read and convert the .heic file to a PIL image
@@ -74,16 +80,16 @@ def encode_image(image_path):
 def queryImages(keyword):
     cursor.execute("SELECT * FROM images where keywords = (?)", (keyword, ))
     rows = cursor.fetchall()
-    print(rows)
     return rows
 
+# handle '0' result from similar words
 @app.route('/get-images', methods=['GET'])
 def queryImagesKeyword():
     keyword = request.args.get('keyword')
     if keyword not in vocab_list:
-        keyword = keyword_to_nearest_key(keyword)
-
-    rows = queryImages(keyword)
+        keyword = keyword_to_nearest_key(keyword, vocab_list)
+    
+    rows = queryImages(keyword[0]) if type(keyword) is list else queryImages(keyword)
     matching_imgs = []
 
     for id, _ in rows:
