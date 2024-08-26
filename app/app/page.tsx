@@ -46,12 +46,12 @@ export default function Home() {
 
   return (
     <div>
-      <div className="flex items-center justify-center min-h-screen">
-        <div>
-          <h1 className="mb-5">Enter Parameters</h1>
+      <div className="flex items-center justify-center">
+        <div className="mt-20">
+          <h1 className="mb-5">Enter A Prompt To Find Images</h1>
           <div>
-            <input type="text" className="mb-5 text-black pl-1.5" onChange={(e) => setParameter(e.target.value)}/>
-            <button onClick={handleSubmit}>Enter</button>
+            <input type="text" className="mb-5 text-black pl-1.5 mr-5" onChange={(e) => setParameter(e.target.value)}/>
+            <button onClick={handleSubmit} className="bg-white text-black rounded-lg pl-5 pr-5 ">Enter</button>
           </div>
         </div>
       </div>

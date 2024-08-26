@@ -89,7 +89,7 @@ def queryImagesKeyword():
     if keyword not in vocab_list:
         keyword = keyword_to_nearest_key(keyword, vocab_list)
     
-    rows = queryImages(keyword[0]) if type(keyword) is list else queryImages(keyword)
+    rows = queryImages(keyword[0]) if type(keyword) is list or tuple else queryImages(keyword)
     matching_imgs = []
 
     for id, _ in rows:
