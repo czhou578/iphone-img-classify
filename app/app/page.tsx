@@ -18,6 +18,7 @@ export default function Home() {
 
     // Match and extract noun or noun phrases
     const nouns = doc.nouns().out('array');
+    console.log('nouns, ', nouns)
 
     if (nouns.length > 0) {
       // For simplicity, let's just take the first noun as the keyword

@@ -12,15 +12,18 @@ import io
 import pyheif
 from PIL import Image
 import os
+from dotenv import load_dotenv
 
 app = Flask(__name__)
 CORS(app)
+
+load_dotenv()
 
 conn = sqlite3.connect('pictures.db', check_same_thread=False)
 cursor = conn.cursor()
 
 nltk.download('wordnet')
-windows_image_path = os.environ.get('FILE_PATH')
+windows_image_path = os.environ['FILE_PATH']
 wsl_path = subprocess.check_output(['wslpath', windows_image_path]).decode().strip()
 image_extensions = ["*.HEIC", "*.heic"]
 img_paths = []
@@ -78,8 +81,10 @@ def encode_image(image_path):
     return img_str
 
 def queryImages(keyword):
+    print('keyword in query', keyword)
     cursor.execute("SELECT * FROM images where keywords = (?)", (keyword, ))
     rows = cursor.fetchall()
+    print(rows)
     return rows
 
 # handle '0' result from similar words
@@ -89,12 +94,15 @@ def queryImagesKeyword():
     if keyword not in vocab_list:
         keyword = keyword_to_nearest_key(keyword, vocab_list)
     
-    rows = queryImages(keyword[0]) if type(keyword) is list or tuple else queryImages(keyword)
+    print('keyword is, ', keyword)
+    rows = queryImages(keyword)
+    
+    # rows = queryImages(keyword[0]) if type(keyword) is list or tuple else queryImages(keyword)
     matching_imgs = []
 
     for id, _ in rows:
         matching_img_path = os.path.join(wsl_path, img_paths[id - 1])
-        if os.path.exists(matching_img_path) and matching_img_path.endswith('.heic'):
+        if os.path.exists(matching_img_path) and (matching_img_path.endswith('.heic') or matching_img_path.endswith('.HEIC')):
             encoded_image_path = encode_image(matching_img_path)
 
             matching_imgs.append({"path": encoded_image_path})

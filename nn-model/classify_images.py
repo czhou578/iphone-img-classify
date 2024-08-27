@@ -10,9 +10,11 @@ import glob
 import json
 import sqlite3
 import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
-windows_image_paths = os.environ.get('FILE_PATH')
+windows_image_paths = os.environ['FILE_PATH']
 download_url("https://s3.amazonaws.com/deep-learning-models/image-models/imagenet_class_index.json", ".", "imagenet_class_index.json")
 
 wsl_path = subprocess.check_output(['wslpath', windows_image_paths]).decode().strip()
